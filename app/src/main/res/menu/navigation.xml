@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/btn_ask"
+        android:icon="@drawable/twotone_mic_black_18dp"
+        android:title="Ask MagicBall" />
+
+    <item
+        android:id="@+id/btn_listen"
+        android:enabled="false"
+        android:icon="@drawable/twotone_play_arrow_black_18dp"
+        android:title="Listen Question" />
+
+    <item
+        android:id="@+id/btn_see_future"
+        android:enabled="false"
+        android:icon="@drawable/twotone_sentiment_satisfied_alt_black_18dp"
+        android:title="See Future" />
+
+
+</menu>
