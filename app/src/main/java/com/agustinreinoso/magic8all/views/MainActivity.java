@@ -3,6 +3,9 @@ package com.agustinreinoso.magic8all.views;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.animation.DynamicAnimation;
+import android.support.animation.SpringAnimation;
+import android.support.animation.SpringForce;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private RecorderManager recorderManager;
     private boolean isRecording = false;
     private Menu menuOption;
+    private ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 // result of the request.
             }
         }
+
+        img = findViewById(R.id.imgball);
     }
 
 
@@ -134,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     menuOption.findItem(R.id.btn_see_future).setEnabled(true);
                     menuOption.findItem(R.id.btn_listen).setEnabled(true);
                 }
+
+
                 return true;
 
 
@@ -147,6 +156,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 if (recorderManager != null) {
                     recorderManager.cleanReources();
                 }
+                img.setVisibility(View.VISIBLE);
+                SpringAnimation animation = new SpringAnimation(img, DynamicAnimation.TRANSLATION_Y, 0);
+                animation.setStartValue(1000);
+                animation.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_HIGH_BOUNCY);
+                animation.getSpring().setStiffness(SpringForce.STIFFNESS_VERY_LOW);
+                animation.start();
+
                 return true;
         }
         return false;

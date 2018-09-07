@@ -5,6 +5,7 @@ import com.agustinreinoso.magic8all.abstractbehaviors.Recorder;
 public class RecorderManager {
     private Recorder recorder;
     private boolean isRecording = false;
+    private boolean isWatching = false;
 
     public RecorderManager(Recorder recorder) {
         this.recorder = recorder;
@@ -45,6 +46,7 @@ public class RecorderManager {
             @Override
             public void run() {
                 recorder.playMedia();
+                isWatching=false;
             }
         }).start();
     }
