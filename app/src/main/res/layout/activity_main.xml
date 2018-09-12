@@ -8,15 +8,26 @@
     android:orientation="vertical"
     tools:context=".views.MainActivity">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120sp"
+        android:gravity="center"
+        android:text="Shake Ball to See the Future"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="28sp"
+        android:visibility="gone" />
+
     <ImageView
-        android:contentDescription="@string/imagen_de_la_bola_8"
         android:id="@+id/imgball"
-        android:layout_width="200dp"
-        android:visibility="gone"
-        android:layout_height="200dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_centerInParent="true"
+        android:contentDescription="@string/imagen_de_la_bola_8"
         android:scaleType="centerInside"
-        android:src="@drawable/magic" />
+        android:src="@drawable/ball"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/loading"

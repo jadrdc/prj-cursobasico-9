@@ -19,6 +19,14 @@ public class RecorderManager {
         }
     }
 
+    public void controlPlaying() {
+        if (isWatching) {
+            stopMediaPlaying();
+        } else {
+            playMedia();
+        }
+    }
+
     public void starRecording() {
         new Thread(new Runnable() {
             @Override
@@ -41,12 +49,22 @@ public class RecorderManager {
         }).start();
     }
 
-    public void playMedia() {
+    private void playMedia() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 recorder.playMedia();
-                isWatching=false;
+                isWatching = true;
+            }
+        }).start();
+    }
+
+    private void stopMediaPlaying() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                recorder.stopPlayMedia();
+                isWatching = false;
             }
         }).start();
     }
