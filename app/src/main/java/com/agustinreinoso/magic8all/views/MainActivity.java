@@ -1,6 +1,9 @@
 package com.agustinreinoso.magic8all.views;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -16,6 +19,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Property;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +38,7 @@ import com.agustinreinoso.magic8all.managers.RecorderManager;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, SensorEventListener {
 
     private TextView mTextMessage;
+    private boolean isMoving = false;
     private TextView mtextTitle;
     private RecorderManager recorderManager;
     private MotionManager sensorManager;
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     2912);
         }
         img = findViewById(R.id.imgball);
-        mtextTitle=findViewById(R.id.title);
+        mtextTitle = findViewById(R.id.title);
         sensorManager = new MotionManager(getApplicationContext(), Sensor.TYPE_ACCELEROMETER);
 
     }
@@ -143,15 +148,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             float z = event.values[2];
 
             if (sensorManager.hasShaken(x, y, z)) {
-                SpringAnimation animation = new SpringAnimation(img, DynamicAnimation.X, 500f);
 
+                if (isMoving == false) {
+                    if (x < 0) {
+                        isMoving = true;
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 0);
+                        animator.setDuration(1000);
+                        animator.addListener(animatorListener);
+                        animator.start();
+                    } else {
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 1000);
+                        animator.setDuration(1000);
+                        animator.addListener(animatorListener);
+                        animator.start();
 
-                animation.setMinValue(100);
-                animation.setMaxValue(1000);
-                animation.setStartValue(100);
-                animation.setStartVelocity(100);
-                animation.getSpring().setStiffness(SpringForce.STIFFNESS_VERY_LOW);
-                animation.start();
+                    }
+                }
+
             }
         }
     }
@@ -173,4 +186,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    private Animator.AnimatorListener animatorListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            super.onAnimationEnd(animation);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 500);
+            animator.setDuration(1000);
+            animator.start();
+            isMoving = false;
+            SpringAnimation springAnimationn= new SpringAnimation(img, DynamicAnimation.TRANSLATION_Y, 0);
+            springAnimationn.setStartValue(800);
+            springAnimationn.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_HIGH_BOUNCY);
+            springAnimationn.getSpring().setStiffness(SpringForce.STIFFNESS_VERY_LOW);
+            springAnimationn.start();
+
+        }
+    };
 }
