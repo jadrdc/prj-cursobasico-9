@@ -33,7 +33,9 @@ import android.widget.Toast;
 import com.agustinreinoso.magic8all.R;
 import com.agustinreinoso.magic8all.helpers.AudioRecorder;
 import com.agustinreinoso.magic8all.managers.MotionManager;
+import com.agustinreinoso.magic8all.managers.QuestionManager;
 import com.agustinreinoso.magic8all.managers.RecorderManager;
+import com.agustinreinoso.magic8all.models.FutureGuess;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, SensorEventListener {
 
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private MotionManager sensorManager;
     private boolean isRecording = false;
     private Menu menuOption;
+    private QuestionManager questionManager;
     private ImageView img;
 
     @Override
@@ -120,6 +123,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
                 img.setVisibility(View.VISIBLE);
                 mtextTitle.setVisibility(View.VISIBLE);
+                mtextTitle.setTextSize(28);
+                mtextTitle.setText("Shake Ball to See the Future");
+                mtextTitle.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
                 SpringAnimation animation = new SpringAnimation(img, DynamicAnimation.TRANSLATION_Y, 0);
                 animation.setStartValue(800);
                 animation.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_HIGH_BOUNCY);
@@ -150,19 +157,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             if (sensorManager.hasShaken(x, y, z)) {
 
                 if (isMoving == false) {
-                    if (x < 0) {
+
+                    double scale = Math.pow(10, 4);
+                    if ((Math.round(x * scale) / scale) > 8.0000) {
                         isMoving = true;
                         ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 0);
-                        animator.setDuration(1000);
-                        animator.addListener(animatorListener);
-                        animator.start();
-                    } else {
-                        ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 1000);
-                        animator.setDuration(1000);
+                        animator.setDuration(300);
                         animator.addListener(animatorListener);
                         animator.start();
 
+                    } else if ((Math.round(x * scale) / scale) < -8.0000) {
+
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 1000);
+                        animator.setDuration(300);
+                        animator.addListener(animatorListener);
+                        animator.start();
                     }
+
                 }
 
             }
@@ -172,9 +183,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, SensorManager.SENSOR_DELAY_NORMAL);
-
     }
+
 
     @Override
     protected void onPause() {
@@ -192,14 +202,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         public void onAnimationEnd(Animator animation) {
             super.onAnimationEnd(animation);
             ObjectAnimator animator = ObjectAnimator.ofFloat(img, "X", 500);
-            animator.setDuration(1000);
+            animator.setDuration(500);
             animator.start();
             isMoving = false;
-            SpringAnimation springAnimationn= new SpringAnimation(img, DynamicAnimation.TRANSLATION_Y, 0);
+            SpringAnimation springAnimationn = new SpringAnimation(img, DynamicAnimation.TRANSLATION_Y, 0);
             springAnimationn.setStartValue(800);
             springAnimationn.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_HIGH_BOUNCY);
             springAnimationn.getSpring().setStiffness(SpringForce.STIFFNESS_VERY_LOW);
             springAnimationn.start();
+
+            if (questionManager == null) {
+                questionManager = new QuestionManager();
+            }
+            FutureGuess futureGuess = questionManager.guessFuture();
+            mtextTitle.setText(futureGuess.getGuess());
+            mtextTitle.setTextColor(futureGuess.getDangerLevel());
+            mtextTitle.setTextSize(40);
 
         }
     };
